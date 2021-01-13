@@ -9,14 +9,16 @@ namespace Juce.Scripting
 
         private bool executed;
 
+        public Script Script { get; private set; }
         public int ScriptInstructionIndex { get; set; }
 
         public IReadOnlyList<Port> InputPorts => inputPorts;
         public IReadOnlyList<Port> OutputPorts => outputPorts;
 
-        public void Init(int scriptInstructionIndex)
+        public void Init(Script script, int scriptInstructionIndex)
         {
-            this.ScriptInstructionIndex = scriptInstructionIndex;
+            Script = script;
+            ScriptInstructionIndex = scriptInstructionIndex;
         }
 
         public bool TryGetInputPort(int index, out Port port)

@@ -35,6 +35,8 @@
 
             while (currentFlow != null)
             {
+                ExecuteScriptInstruction(currentFlow);
+
                 bool found = script.TryGetScriptInstruction(currentFlow.OutputFlowScriptInstructionIndex, 
                     out ScriptInstruction scriptInstruction);
 
@@ -42,8 +44,6 @@
                 {
                     return;
                 }
-
-                ExecuteScriptInstruction(scriptInstruction);
 
                 currentFlow = scriptInstruction as FlowScriptInstruction;
             }

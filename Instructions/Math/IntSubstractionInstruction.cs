@@ -1,6 +1,6 @@
 ﻿namespace Juce.Scripting.Instructions
 {
-    public class IntAdditionInstruction : ScriptInstruction
+    public class IntSubstractionInstruction : ScriptInstruction
     {
         public const string ValueAIn = nameof(ValueAIn);
         public const string ValueBIn = nameof(ValueBIn);
@@ -18,7 +18,7 @@
             int valueA = GetInputPortValue<int>(ValueAIn);
             int valueB = GetInputPortValue<int>(ValueBIn);
 
-            SetOutputPortValue(ResultOut, valueA + valueB);
+            SetOutputPortValue(ResultOut, valueA - valueB);
         }
     }
 }

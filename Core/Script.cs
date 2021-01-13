@@ -25,7 +25,7 @@ namespace Juce.Scripting
         {
             T instruction = Activator.CreateInstance<T>();
 
-            instruction.Init(scriptInstructions.Count);
+            instruction.Init(this, scriptInstructions.Count);
 
             scriptInstructions.Add(instruction);
 

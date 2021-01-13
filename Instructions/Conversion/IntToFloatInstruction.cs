@@ -1,6 +1,6 @@
 ﻿namespace Juce.Scripting.Instructions
 {
-    public class IntToStringInstruction : ScriptInstruction
+    public class IntToFloatInstruction : ScriptInstruction
     {
         public const string ValueIn = nameof(ValueIn);
         public const string ValueOut = nameof(ValueOut);
@@ -8,14 +8,14 @@
         public override void RegisterPorts()
         {
             AddInputPort<int>(ValueIn);
-            AddOutputPort<string>(ValueOut);
+            AddOutputPort<float>(ValueOut);
         }
 
         protected override void Execute()
         {
             int value = GetInputPortValue<int>(ValueIn);
 
-            SetOutputPortValue(ValueOut, value.ToString());
+            SetOutputPortValue(ValueOut, (float)value);
         }
     }
 }

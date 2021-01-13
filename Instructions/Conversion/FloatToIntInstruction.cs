@@ -1,21 +1,21 @@
 ﻿namespace Juce.Scripting.Instructions
 {
-    public class IntToStringInstruction : ScriptInstruction
+    public class FloatToIntInstruction : ScriptInstruction
     {
         public const string ValueIn = nameof(ValueIn);
         public const string ValueOut = nameof(ValueOut);
 
         public override void RegisterPorts()
         {
-            AddInputPort<int>(ValueIn);
-            AddOutputPort<string>(ValueOut);
+            AddInputPort<float>(ValueIn);
+            AddOutputPort<int>(ValueOut);
         }
 
         protected override void Execute()
         {
-            int value = GetInputPortValue<int>(ValueIn);
+            float value = GetInputPortValue<float>(ValueIn);
 
-            SetOutputPortValue(ValueOut, value.ToString());
+            SetOutputPortValue(ValueOut, (int)value);
         }
     }
 }

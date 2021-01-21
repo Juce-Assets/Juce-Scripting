@@ -2,7 +2,7 @@
 
 namespace Juce.Scripting
 {
-    public class StartFlow : FlowScriptInstruction
+    public class StartFlowInstruction : FlowScriptInstruction
     {
         protected override void Execute()
         {

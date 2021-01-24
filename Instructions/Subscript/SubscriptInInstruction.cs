@@ -1,6 +1,6 @@
-﻿namespace Juce.Scripting.Instructions.Subscript
+﻿namespace Juce.Scripting.Instructions.SubScript
 {
-    public class SubscriptInInstruction : FlowScriptInstruction
+    public class SubScriptInInstruction : FlowScriptInstruction
     {
         public override void RegisterPorts()
         {

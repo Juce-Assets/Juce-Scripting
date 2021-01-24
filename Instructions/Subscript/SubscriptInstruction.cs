@@ -1,10 +1,10 @@
 ﻿using Juce.Scripting.Execution;
 
-namespace Juce.Scripting.Instructions.Subscript
+namespace Juce.Scripting.Instructions.SubScript
 {
-    public class SubscriptInstruction : FlowScriptInstruction
+    public class SubScriptInstruction : FlowScriptInstruction
     {
-        public Script Subscript { get; set; }
+        public Script SubScript { get; set; }
         public int SubscriptInInstructionIndex { get; set; }
         public int SubscriptOutInstructionIndex { get; set; }
 
@@ -15,33 +15,40 @@ namespace Juce.Scripting.Instructions.Subscript
 
         protected override void Execute()
         {
-            if(Subscript == null)
+            if(SubScript == null)
             {
                 return;
             }
 
-            SubscriptInInstruction subscriptInInstruction = null;
-            SubscriptOutInstruction subscriptOutInstruction = null;
+            SubScriptInInstruction subscriptInInstruction = null;
+            SubScriptOutInstruction subscriptOutInstruction = null;
 
-            bool inFound = Subscript.TryGetScriptInstruction(
+            bool inFound = SubScript.TryGetScriptInstruction(
                 SubscriptInInstructionIndex, 
                 out ScriptInstruction scriptInInstruction
                 );
 
-            bool outFound = Subscript.TryGetScriptInstruction(
+            bool outFound = SubScript.TryGetScriptInstruction(
                 SubscriptOutInstructionIndex,
                 out ScriptInstruction scriptOutInstruction
                 );
 
             if (inFound && outFound)
             {
-                subscriptInInstruction = scriptInInstruction as SubscriptInInstruction;
-                subscriptOutInstruction = scriptOutInstruction as SubscriptOutInstruction;
+                subscriptInInstruction = scriptInInstruction as SubScriptInInstruction;
+                subscriptOutInstruction = scriptOutInstruction as SubScriptOutInstruction;
             }
 
-            if(subscriptInInstruction == null || subscriptOutInstruction == null)
+            if(subscriptInInstruction == null)
             {
-                return;
+                throw new System.Exception($"Subscript does not have input node at {nameof(SubScriptInstruction)} " +
+                    $"with index {ScriptInstructionIndex}");
+            }
+
+            if(subscriptOutInstruction == null)
+            {
+                throw new System.Exception($"Subscript does not have output node at {nameof(SubScriptInstruction)} " +
+                    $"with index {ScriptInstructionIndex}");
             }
 
             foreach(Port port in InputPorts)
@@ -49,7 +56,7 @@ namespace Juce.Scripting.Instructions.Subscript
                 subscriptInInstruction.SetOutputPortValue(port.PortId, port.Value);
             }
 
-            new ScriptExecutor(Subscript).ExecuteFlow(subscriptInInstruction);
+            new ScriptExecutor(SubScript).ExecuteFlow(subscriptInInstruction);
 
             foreach(Port port in subscriptOutInstruction.InputPorts)
             {

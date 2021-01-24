@@ -4,13 +4,13 @@ namespace Juce.Scripting
 {
     public class Port
     {
-        public int ScriptInstructionIndex { get; set; }
-        public int PortIndex { get; set; }
+        public int ScriptInstructionIndex { get; set; } = -1;
+        public int PortIndex { get; set; } = -1;
         public string PortId { get; set; }
         public Type PortConnectionType { get; set; }
 
-        public int ConnectedPortIndex { get; set; }
-        public int ConnectedPortScriptInstructionIndex { get; set; }
+        public int ConnectedPortIndex { get; set; } = -1;
+        public int ConnectedPortScriptInstructionIndex { get; set; } = -1;
 
         public object FallbackValue { get; set; }
         public object Value { get; set; }

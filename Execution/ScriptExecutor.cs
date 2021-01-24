@@ -16,9 +16,14 @@
                 return;
             }
 
-            FlowScriptInstruction startFlow = script.ScriptInstructions[0] as FlowScriptInstruction;
+            bool found = script.TryGetScriptInstruction(out StartFlowInstruction startFlowInstruction);
 
-            ExecuteFlow(startFlow);
+            if(!found)
+            {
+                return;
+            }
+
+            ExecuteFlow(startFlowInstruction);
         }
 
         public void ResetScript()
@@ -66,6 +71,8 @@
 
             if(!instructionFound)
             {
+                inputPort.Value = inputPort.FallbackValue;
+
                 return;
             }
 

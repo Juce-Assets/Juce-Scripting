@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Juce.Scripting
 {
@@ -77,16 +78,39 @@ namespace Juce.Scripting
 
         public void AddInputPort<T>(string id)
         {
-            Port port = new Port(ScriptInstructionIndex, inputPorts.Count, id, typeof(T));
-
-            inputPorts.Add(port);
+            AddInputPort(typeof(T), id);
         }
 
         public void AddOutputPort<T>(string id)
         {
-            Port port = new Port(ScriptInstructionIndex, outputPorts.Count, id, typeof(T));
+            AddOutputPort(typeof(T), id);
+        }
+
+        public void AddInputPort(Type type, string id)
+        {
+            Port port = new Port(ScriptInstructionIndex, inputPorts.Count, id, type);
+
+            inputPorts.Add(port);
+        }
+
+        public void AddOutputPort(Type type, string id)
+        {
+            Port port = new Port(ScriptInstructionIndex, outputPorts.Count, id, type);
 
             outputPorts.Add(port);
+        }
+
+        protected void SetInputPortValue(string id, object value)
+        {
+            foreach (Port port in InputPorts)
+            {
+                if (string.Equals(id, port.PortId))
+                {
+                    port.Value = value;
+
+                    break;
+                }
+            }
         }
 
         public void SetOutputPortValue(string id, object value)

@@ -8,7 +8,7 @@ namespace Juce.Scripting.Instructions.SubScript
 
         }
 
-        protected override void Execute()
+        protected override void Execute(Script script)
         {
 
         }

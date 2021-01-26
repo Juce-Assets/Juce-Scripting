@@ -4,18 +4,20 @@ namespace Juce.Scripting.Instructions.SubScript
 {
     public class SubScriptInstruction : FlowScriptInstruction
     {
-        public Script SubScript { get; set; }
-        public int SubscriptInInstructionIndex { get; set; }
-        public int SubscriptOutInstructionIndex { get; set; }
+        public int SubScriptIndex { get; set; } = -1;
+        public int SubscriptInInstructionIndex { get; set; } = -1;
+        public int SubscriptOutInstructionIndex { get; set; } = -1;
 
         public override void RegisterPorts()
         {
 
         }
 
-        protected override void Execute()
+        protected override void Execute(Script script)
         {
-            if(SubScript == null)
+            bool found = script.TryGetSubScript(SubScriptIndex, out Script subScript);
+
+            if(!found)
             {
                 return;
             }
@@ -23,12 +25,12 @@ namespace Juce.Scripting.Instructions.SubScript
             SubScriptInInstruction subscriptInInstruction = null;
             SubScriptOutInstruction subscriptOutInstruction = null;
 
-            bool inFound = SubScript.TryGetScriptInstruction(
+            bool inFound = subScript.TryGetScriptInstruction(
                 SubscriptInInstructionIndex, 
                 out ScriptInstruction scriptInInstruction
                 );
 
-            bool outFound = SubScript.TryGetScriptInstruction(
+            bool outFound = subScript.TryGetScriptInstruction(
                 SubscriptOutInstructionIndex,
                 out ScriptInstruction scriptOutInstruction
                 );
@@ -56,7 +58,7 @@ namespace Juce.Scripting.Instructions.SubScript
                 subscriptInInstruction.SetOutputPortValue(port.PortId, port.Value);
             }
 
-            new ScriptExecutor(SubScript).ExecuteFlow(subscriptInInstruction);
+            new ScriptExecutor(subScript).ExecuteFlow(subscriptInInstruction);
 
             foreach(Port port in subscriptOutInstruction.InputPorts)
             {

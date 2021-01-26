@@ -13,7 +13,7 @@
             AddOutputPort<int>(ResultOut);
         }
 
-        protected override void Execute()
+        protected override void Execute(Script script)
         {
             int valueA = GetInputPortValue<int>(ValueAIn);
             int valueB = GetInputPortValue<int>(ValueBIn);

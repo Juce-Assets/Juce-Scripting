@@ -1,6 +1,8 @@
-﻿namespace Juce.Scripting.Instructions
+﻿using System;
+
+namespace Juce.Scripting.Instructions
 {
-    public class IntAdditionInstruction : ScriptInstruction
+    public class IntMaxInstruction : ScriptInstruction
     {
         public const string ValueAIn = nameof(ValueAIn);
         public const string ValueBIn = nameof(ValueBIn);
@@ -13,14 +15,12 @@
             AddOutputPort<int>(ResultOut);
         }
 
-        protected override void Execute()
+        protected override void Execute(Script script)
         {
             int valueA = GetInputPortValue<int>(ValueAIn);
             int valueB = GetInputPortValue<int>(ValueBIn);
 
-            SetOutputPortValue(ResultOut, valueA + valueB);
+            SetOutputPortValue(ResultOut, Math.Max(valueA, valueB));
         }
     }
 }
-
-

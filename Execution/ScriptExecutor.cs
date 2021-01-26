@@ -61,7 +61,7 @@
                 GatherInputPortValue(inputPort);
             }
 
-            scriptInstruction.TryExecute();
+            scriptInstruction.TryExecute(script);
         }
 
         private void GatherInputPortValue(Port inputPort)

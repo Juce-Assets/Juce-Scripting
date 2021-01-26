@@ -11,7 +11,7 @@
             AddOutputPort<int>(ValueOut);
         }
 
-        protected override void Execute()
+        protected override void Execute(Script script)
         {
             float value = GetInputPortValue<float>(ValueIn);
 

@@ -10,17 +10,11 @@ namespace Juce.Scripting
 
         private bool executed;
 
-        public Script Script { get; private set; }
-        public int ScriptInstructionIndex { get; set; }
+        public int ScriptInstructionIndex { get; set; } = -1;
 
         public IReadOnlyList<Port> InputPorts => inputPorts;
         public IReadOnlyList<Port> OutputPorts => outputPorts;
 
-        public void Init(Script script, int scriptInstructionIndex)
-        {
-            Script = script;
-            ScriptInstructionIndex = scriptInstructionIndex;
-        }
 
         public bool TryGetInputPort(int index, out Port port)
         {
@@ -145,23 +139,20 @@ namespace Juce.Scripting
             {
                 if (string.Equals(id, port.PortId))
                 {
-                    if(!(port.Value is T))
+                    T ret = default;
+
+                    try
                     {
-                        if (port.Value != null)
-                        {
-                            throw new System.Exception($"Tried to get input port value with id {id} of type {typeof(T).Name}, but " +
-                                $"the type of the value is {port.Value.GetType().Name}, at instruction {GetType().Name} " +
-                                $"with index {ScriptInstructionIndex}");
-                        }
-                        else
-                        {
-                            throw new System.Exception($"Tried to get input port value with id {id} of type {typeof(T).Name}, but " +
-                              $"the value is null, at instruction {GetType().Name} " +
-                              $"with index {ScriptInstructionIndex}");
-                        }
+                        ret = (T)Convert.ChangeType(port.Value, typeof(T));
+                    }
+                    catch
+                    {
+                        throw new System.Exception($"Tried to get input port value with id {id} of type {typeof(T).Name}, but " +
+                            $"the type of the value is {port.Value.GetType().Name}, at instruction {GetType().Name} " +
+                            $"with index {ScriptInstructionIndex}");
                     }
 
-                    return (T)port.Value;
+                    return ret;
                 }
             }
 
@@ -220,7 +211,7 @@ namespace Juce.Scripting
             inputPort.Connect(outputPort);
         }
 
-        public void TryExecute()
+        public void TryExecute(Script script)
         {
             if(executed)
             {
@@ -229,7 +220,7 @@ namespace Juce.Scripting
 
             executed = true;
 
-            Execute();
+            Execute(script);
         }
 
         public void ResetInstruction()
@@ -248,6 +239,6 @@ namespace Juce.Scripting
         }
 
         public abstract void RegisterPorts();
-        protected abstract void Execute();
+        protected abstract void Execute(Script script);
     }
 }

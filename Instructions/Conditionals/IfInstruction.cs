@@ -24,25 +24,25 @@ namespace Juce.Scripting.Instructions
             AddInputPort<bool>(ConditionIn);
         }
 
-        protected override void Execute()
+        protected override void Execute(Script script)
         {
             bool conditionResult = GetInputPortValue<bool>(ConditionIn);
 
             if(conditionResult)
             {
-                Script.TryGetScriptInstruction(TrueOutputFlowScriptInstructionIndex, out ScriptInstruction scriptInstruction);
+                script.TryGetScriptInstruction(TrueOutputFlowScriptInstructionIndex, out ScriptInstruction scriptInstruction);
 
                 FlowScriptInstruction flowScriptInstruction = scriptInstruction as FlowScriptInstruction;
 
-                new ScriptExecutor(Script).ExecuteFlow(flowScriptInstruction);
+                new ScriptExecutor(script).ExecuteFlow(flowScriptInstruction);
             }
             else
             {
-                Script.TryGetScriptInstruction(FalseOutputFlowScriptInstructionIndex, out ScriptInstruction scriptInstruction);
+                script.TryGetScriptInstruction(FalseOutputFlowScriptInstructionIndex, out ScriptInstruction scriptInstruction);
 
                 FlowScriptInstruction flowScriptInstruction = scriptInstruction as FlowScriptInstruction;
 
-                new ScriptExecutor(Script).ExecuteFlow(flowScriptInstruction);
+                new ScriptExecutor(script).ExecuteFlow(flowScriptInstruction);
             }
         }
     }

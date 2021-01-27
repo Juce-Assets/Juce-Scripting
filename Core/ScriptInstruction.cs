@@ -8,13 +8,16 @@ namespace Juce.Scripting
         private readonly List<Port> inputPorts = new List<Port>();
         private readonly List<Port> outputPorts = new List<Port>();
 
-        private bool executed;
-
         public int ScriptInstructionIndex { get; set; } = -1;
 
         public IReadOnlyList<Port> InputPorts => inputPorts;
         public IReadOnlyList<Port> OutputPorts => outputPorts;
 
+        public bool Executed { get; private set; }
+
+        protected virtual bool CanReExecute { get; }
+
+        public bool CanExecute => !Executed || CanReExecute;
 
         public bool TryGetInputPort(int index, out Port port)
         {
@@ -40,7 +43,7 @@ namespace Juce.Scripting
             return true;
         }
 
-        private bool TryGetInputPort(string id, out Port port)
+        protected bool TryGetInputPort(string id, out Port port)
         {
             foreach (Port inputPort in inputPorts)
             {
@@ -55,7 +58,7 @@ namespace Juce.Scripting
             return false;
         }
 
-        private bool TryGetOutputPort(string id, out Port port)
+        protected bool TryGetOutputPort(string id, out Port port)
         {
             foreach (Port outputPort in outputPorts)
             {
@@ -213,18 +216,23 @@ namespace Juce.Scripting
 
         public void TryExecute(Script script)
         {
-            if(executed)
+            if(!CanExecute)
             {
                 return;
             }
 
-            executed = true;
+            Executed = true;
 
             Execute(script);
         }
 
-        public void ResetInstruction()
+        public void ResetInstruction(Script script)
         {
+            if(!Executed)
+            {
+                return;
+            }
+
             foreach (Port inputPort in inputPorts)
             {
                 inputPort.Value = default;
@@ -235,10 +243,13 @@ namespace Juce.Scripting
                 outputPort.Value = default;
             }
 
-            executed = false;
+            Executed = false;
+
+            OnResetInstruction(script);
         }
 
         public abstract void RegisterPorts();
         protected abstract void Execute(Script script);
+        protected virtual void OnResetInstruction(Script script) { }
     }
 }

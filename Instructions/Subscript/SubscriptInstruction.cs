@@ -2,7 +2,7 @@
 
 namespace Juce.Scripting.Instructions.SubScript
 {
-    public class SubScriptInstruction : FlowScriptInstruction
+    public class SubScriptInstruction : FlowInstruction
     {
         public int SubScriptIndex { get; set; } = -1;
         public int SubscriptInInstructionIndex { get; set; } = -1;
@@ -64,6 +64,36 @@ namespace Juce.Scripting.Instructions.SubScript
             {
                 SetOutputPortValue(port.PortId, port.Value);
             }
+        }
+
+        protected override void OnResetInstruction(Script script)
+        {
+            bool found = script.TryGetSubScript(SubScriptIndex, out Script subScript);
+
+            if (!found)
+            {
+                return;
+            }
+
+            SubScriptInInstruction subscriptInInstruction = null;
+
+            bool inFound = subScript.TryGetScriptInstruction(
+                SubscriptInInstructionIndex,
+                out ScriptInstruction scriptInInstruction
+                );
+
+            if (inFound)
+            {
+                subscriptInInstruction = scriptInInstruction as SubScriptInInstruction;
+            }
+
+            if (subscriptInInstruction == null)
+            {
+                throw new System.Exception($"Subscript does not have input node at {nameof(SubScriptInstruction)} " +
+                    $"with index {ScriptInstructionIndex}");
+            }
+
+            new ScriptExecutor(subScript).ResetAllInstructions();
         }
     }
 }

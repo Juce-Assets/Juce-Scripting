@@ -1,4 +1,6 @@
-﻿namespace Juce.Scripting.Execution
+﻿using System.Collections.Generic;
+
+namespace Juce.Scripting.Execution
 {
     public class ScriptExecutor : IScriptExecutor
     {
@@ -23,26 +25,20 @@
                 return;
             }
 
+            ResetAllInstructions();
+
             ExecuteFlow(startFlowInstruction);
         }
 
-        public void ResetScript()
+        public void ExecuteFlow(FlowInstruction flow)
         {
-            foreach(ScriptInstruction scriptInstruction in script.ScriptInstructions)
-            {
-                scriptInstruction.ResetInstruction();
-            }
-        }
-
-        public void ExecuteFlow(FlowScriptInstruction flow)
-        {
-            FlowScriptInstruction currentFlow = flow;
+            FlowInstruction currentFlow = flow;
 
             while (currentFlow != null)
             {
                 ExecuteScriptInstruction(currentFlow);
 
-                bool found = script.TryGetScriptInstruction(currentFlow.OutputFlowScriptInstructionIndex, 
+                bool found = script.TryGetScriptInstruction(currentFlow.OutputFlowInstructionIndex, 
                     out ScriptInstruction scriptInstruction);
 
                 if (!found)
@@ -50,12 +46,17 @@
                     return;
                 }
 
-                currentFlow = scriptInstruction as FlowScriptInstruction;
+                currentFlow = scriptInstruction as FlowInstruction;
             }
         }
 
         private void ExecuteScriptInstruction(ScriptInstruction scriptInstruction)
         {
+            if(!scriptInstruction.CanExecute)
+            {
+                return;
+            }
+
             foreach(Port inputPort in scriptInstruction.InputPorts)
             {
                 GatherInputPortValue(inputPort);
@@ -66,7 +67,16 @@
 
         private void GatherInputPortValue(Port inputPort)
         {
-            bool instructionFound = script.TryGetScriptInstruction(inputPort.ConnectedPortScriptInstructionIndex, 
+            if(inputPort.PortConnections.Count == 0)
+            {
+                inputPort.Value = inputPort.FallbackValue;
+
+                return;
+            }
+
+            PortConnection currentPortConnection = inputPort.PortConnections[0];
+
+            bool instructionFound = script.TryGetScriptInstruction(currentPortConnection.ConnectedPortScriptInstructionIndex, 
                 out ScriptInstruction scriptInstruction);
 
             if(!instructionFound)
@@ -76,7 +86,7 @@
                 return;
             }
 
-            bool outputPortFound = scriptInstruction.TryGetOutputPort(inputPort.ConnectedPortIndex, out Port outputPort);
+            bool outputPortFound = scriptInstruction.TryGetOutputPort(currentPortConnection.ConnectedPortIndex, out Port outputPort);
 
             if(!outputPortFound)
             {
@@ -88,6 +98,39 @@
             ExecuteScriptInstruction(scriptInstruction);
 
             inputPort.Value = outputPort.Value;
+        }
+
+        public void ResetAllInstructions()
+        {
+            foreach(ScriptInstruction instruction in script.ScriptInstructions)
+            {
+                instruction.ResetInstruction(script);
+            }
+        }
+
+        public void ResetFlow(FlowInstruction flow)
+        {
+            FlowInstruction currentFlow = flow;
+
+            while (currentFlow != null)
+            {
+                if(!currentFlow.Executed)
+                {
+                    return;
+                }
+
+                currentFlow.ResetInstruction(script);
+
+                bool found = script.TryGetScriptInstruction(currentFlow.OutputFlowInstructionIndex,
+                    out ScriptInstruction scriptInstruction);
+
+                if (!found)
+                {
+                    return;
+                }
+
+                currentFlow = scriptInstruction as FlowInstruction;
+            }
         }
     }
 }

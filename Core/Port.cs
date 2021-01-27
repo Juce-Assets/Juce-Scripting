@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Juce.Scripting
 {
@@ -9,8 +10,7 @@ namespace Juce.Scripting
         public string PortId { get; set; }
         public Type PortConnectionType { get; set; }
 
-        public int ConnectedPortIndex { get; set; } = -1;
-        public int ConnectedPortScriptInstructionIndex { get; set; } = -1;
+        public List<PortConnection> PortConnections { get; set; } = new List<PortConnection>();
 
         public object FallbackValue { get; set; }
         public object Value { get; set; }
@@ -35,11 +35,16 @@ namespace Juce.Scripting
                 return;
             }
 
-            ConnectedPortScriptInstructionIndex = port.ScriptInstructionIndex;
-            ConnectedPortIndex = port.PortIndex;
+            foreach (PortConnection portConnection in PortConnections)
+            {
+                if(portConnection.ConnectedPortScriptInstructionIndex == port.ScriptInstructionIndex)
+                {
+                    return;
+                }
+            }
 
-            port.ConnectedPortScriptInstructionIndex = ScriptInstructionIndex;
-            port.ConnectedPortIndex = PortIndex;
+            PortConnections.Add(new PortConnection(port.PortIndex, port.ScriptInstructionIndex));
+            port.PortConnections.Add(new PortConnection(PortIndex, ScriptInstructionIndex));
         }
     }
 }

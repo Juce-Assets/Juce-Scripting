@@ -2,21 +2,21 @@
 
 namespace Juce.Scripting.Instructions
 {
-    public class IfInstruction : FlowScriptInstruction
+    public class IfInstruction : FlowInstruction
     {
         public const string ConditionIn = nameof(ConditionIn);
 
-        public int TrueOutputFlowScriptInstructionIndex { get; set; } = -1;
-        public int FalseOutputFlowScriptInstructionIndex { get; set; } = -1;
+        public int TrueOutputFlowInstructionIndex { get; set; } = -1;
+        public int FalseOutputFlowInstructionIndex { get; set; } = -1;
 
-        public void ConnectTrueFlow(FlowScriptInstruction flowScriptInstruction)
+        public void ConnectTrueFlow(FlowInstruction flowScriptInstruction)
         {
-            TrueOutputFlowScriptInstructionIndex = flowScriptInstruction.ScriptInstructionIndex;
+            TrueOutputFlowInstructionIndex = flowScriptInstruction.ScriptInstructionIndex;
         }
 
-        public void ConnectFalseFlow(FlowScriptInstruction flowScriptInstruction)
+        public void ConnectFalseFlow(FlowInstruction flowScriptInstruction)
         {
-            FalseOutputFlowScriptInstructionIndex = flowScriptInstruction.ScriptInstructionIndex;
+            FalseOutputFlowInstructionIndex = flowScriptInstruction.ScriptInstructionIndex;
         }
 
         public override void RegisterPorts()
@@ -30,17 +30,17 @@ namespace Juce.Scripting.Instructions
 
             if(conditionResult)
             {
-                script.TryGetScriptInstruction(TrueOutputFlowScriptInstructionIndex, out ScriptInstruction scriptInstruction);
+                script.TryGetScriptInstruction(TrueOutputFlowInstructionIndex, out ScriptInstruction scriptInstruction);
 
-                FlowScriptInstruction flowScriptInstruction = scriptInstruction as FlowScriptInstruction;
+                FlowInstruction flowScriptInstruction = scriptInstruction as FlowInstruction;
 
                 new ScriptExecutor(script).ExecuteFlow(flowScriptInstruction);
             }
             else
             {
-                script.TryGetScriptInstruction(FalseOutputFlowScriptInstructionIndex, out ScriptInstruction scriptInstruction);
+                script.TryGetScriptInstruction(FalseOutputFlowInstructionIndex, out ScriptInstruction scriptInstruction);
 
-                FlowScriptInstruction flowScriptInstruction = scriptInstruction as FlowScriptInstruction;
+                FlowInstruction flowScriptInstruction = scriptInstruction as FlowInstruction;
 
                 new ScriptExecutor(script).ExecuteFlow(flowScriptInstruction);
             }

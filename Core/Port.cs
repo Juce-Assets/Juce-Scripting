@@ -39,7 +39,10 @@ namespace Juce.Scripting
             {
                 if(portConnection.ConnectedPortScriptInstructionIndex == port.ScriptInstructionIndex)
                 {
-                    return;
+                    if (portConnection.ConnectedPortIndex == port.PortIndex)
+                    {
+                        return;
+                    }
                 }
             }
 

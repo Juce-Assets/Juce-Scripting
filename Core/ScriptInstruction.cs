@@ -150,6 +150,13 @@ namespace Juce.Scripting
                     }
                     catch
                     {
+                        if(port.Value == null)
+                        {
+                            throw new System.Exception($"Tried to get input port value with id {id} of type {typeof(T).Name}, but " +
+                                $"the value is null, at instruction {GetType().Name} " +
+                                $"with index {ScriptInstructionIndex}");
+                        }
+
                         throw new System.Exception($"Tried to get input port value with id {id} of type {typeof(T).Name}, but " +
                             $"the type of the value is {port.Value.GetType().Name}, at instruction {GetType().Name} " +
                             $"with index {ScriptInstructionIndex}");
